@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-console.log(process.env.DB_PASS);
+// console.log(process.env.DB_PASS);
 
 
 
@@ -31,12 +31,13 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const categoryCollection = client.db('toyHunter').collection('categories');
         const categoryCollection1 = client.db('toyHunter').collection('categories1');
         const categoryCollection2 = client.db('toyHunter').collection('categories2');
         const categoryCollection3 = client.db('toyHunter').collection('categories3');
+        const reviewCollection = client.db('toyHunter').collection('review');
         const orderCollection = client.db('toyHunter').collection('orders')
 
         app.get('/categories', async (req, res) => {
@@ -56,6 +57,11 @@ async function run() {
         })
         app.get('/categories3', async (req, res) => {
             const cursor = categoryCollection3.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+        app.get('/review', async (req, res) => {
+            const cursor = reviewCollection.find();
             const result = await cursor.toArray();
             res.send(result);
         });
@@ -96,9 +102,28 @@ async function run() {
             res.send(result);
         });
 
-        app.put('orders/:id', async(req, res)=>{
-            const updatedOrders = req.body;
-        })
+        // app.put('/orders/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const filter = { _id: new ObjectId(id) }
+        //     const options = { upsert: true };
+        //     const updateOrders = req.body;
+
+        //     const orders = {
+        //         $set: {
+        //             name: updateOrders.name,
+        //             email: updateOrders.email,
+        //             toyname: updateOrders.toyname,
+        //             subCategory: updateOrders.subCategory,
+        //             ratings: updateOrders.ratings,
+        //             price: updateOrders.price,
+        //             quantity: updateOrders.quantity,
+        //             photo: updateOrders.photo
+        //         }
+        //     }
+        //     const result = await orderCollection.updateOne(filter, orders, options);
+        //     res.send(result);
+
+        // })
 
 
 
