@@ -36,7 +36,8 @@ async function run() {
         const categoryCollection = client.db('toyHunter').collection('categories');
         const categoryCollection1 = client.db('toyHunter').collection('categories1');
         const categoryCollection2 = client.db('toyHunter').collection('categories2');
-
+        const categoryCollection3 = client.db('toyHunter').collection('categories3');
+        const orderCollection = client.db('toyHunter').collection('orders')
 
         app.get('/categories', async (req, res) => {
             const cursor = categoryCollection.find();
@@ -53,6 +54,11 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+        app.get('/categories3', async (req, res) => {
+            const cursor = categoryCollection3.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
         app.get('/categories/:id', async (req, res) => {
             const id = req.params.id;
@@ -61,13 +67,36 @@ async function run() {
 
 
             const options = {
-               
+
                 // Include only the `title` and `imdb` fields in the returned document
-                projection: {  title: 1, price: 1, service_id: 1 },
+                projection: { title: 1, price: 1, service_id: 1 },
             };
-            const result = await categoryCollection.findOne(query,options);
+            const result = await categoryCollection.findOne(query, options);
             res.send(result);
         })
+
+        // orders
+
+        app.get('/orders', async (req, res) => {
+            console.log(req.query.email);
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+            const result = await orderCollection.find().toArray();
+            res.send(result);
+        })
+
+
+
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            console.log(order);
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
+
 
 
 
